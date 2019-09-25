@@ -1,4 +1,5 @@
-#Solution
+
+# Solution
 Image brightness detection
 
 ## Language
