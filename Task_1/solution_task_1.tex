@@ -1,46 +1,178 @@
 \documentclass[12pt,leqno,a4paper]{article}
+
 % \usepackage{natbib}
-% \usepackage[toc]{glossaries} % to show up glossaries in toc
 \usepackage{caption}
 \usepackage[T1]{fontenc} 
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
-% \usepackage{hyperref} % for using this package remove acronyms from subsection
-\usepackage[final]{graphicx}
-\usepackage{float}
-\usepackage[caption = false]{subfig}
-\renewcommand{\baselinestretch}{1.3}
-\parskip = \medskipamount
-\frenchspacing
-% \bibpunct[; ]{(}{)}{;}{a}{,}{;} 
-
-% \usepackage[style=alphabetic]{biblatex}
-\usepackage[backend=biber,style=alphabetic, maxnames=10]{biblatex}
-% commit 23c2332
-% \usepackage[backend=biber,style=alphabetic,citestyle=authoryear]{biblatex}
- 
-
 
 \begin{document}
 
-\section{Introduction}
+\textbf{Ishan Adhaulia}
 
-\section{Related Work}
+\section{Question 1}
 
-% \begin{equation} \label{eq4}
-% \begin{split}
-% E_{x \sim p_d(x)}[-\log p(x)] & < E_{x}[E_{q(z|x)}[-\log (p(x|z)]]+E_{x}[KL(q(z|x)\parallel p(x))]\\
-% & = E_{x}[E_{q(z|x)}[-\log(p(x|z)]]-E_{x}[H(q(z|x))]\\
-% & \quad \quad \quad \quad + E_{q(z)}[-\log p(z)]\\
-% & = E_{x}[E_{q(z|x)}[-\log(p(x|z)]]-E_{x}[\sum_{i}\log \sigma_{i}(x)]\\
-% & \quad \quad \quad \quad + E_{q(z)}[-\log p(z)] + const \\
-% & = Reconstruction - Entropy\\
-% & \quad \quad \quad \quad+ CrossEntropy(q(z),p(z))
-% \end{split}
-% \end{equation}
+\subsection{Solution 1}
+Explain how the SciTail model incorporates Open IE Tuples.
+\newline
+
+In SciTail model implementation, they have used Open IE Tuples as a graph representation for the hypothesis. Even though, the model can use any graph with labeled edges. The outputs from Open IE Tuples are consistent and compatible with the Scitail's model. In each tuple, it extracts subject, predicate, object and many more information which can be used to label the graphs edges and nodes.
+
+\subsection{Solution 2}
+Explain how the tuples help SciTail to perform better compared to a model
+that does not use this information. 
+\newline
+
+In SciTail model implementation,
+\begin{itemize}
+    \item Node attention: 
+    
+    To compute whether a node in the graph is supported by the premise words. We have to identify the premise words similar to the node then compute the attention of the words in the node over the words in the premise. In this work, authors have chose to use the raw word embeddings of the premise to compute this attention.
+    
+    \item Node probabilities:
+    
+    Calculate the probability of each node being supported by the premise by comparing the vector representation of the node with an attention-weighted representation of the premise. 
+    
+    \item Edge Probabilities:
+    
+    The edges in the graph representation for the hypothesis grasps the relation between nodes and calculating the support of an edge corresponds to the extraction of the relation in the hypothesis graph.
+    As per the literature, relation extraction methods  commonly use the output embeddings from an LSTMs to calculate context-dependent representation of the entities.Hence, We have to compute the representation for each node using the attention-weighted representation of the LSTM embeddings for each word in the premise.
+    We also learn an n-dimensional embedding for each edge label. To compute
+    the edge probability using the LSTM-weighted embedding and edge embedding are used.
+\end{itemize}
+
+In \textbf{Final Prediction} step, combine the probability predictions on the nodes and edges to get the final prediction by averaging the node
+and edge probabilities. Refer the equations mentioned in the Final Prediction subsection inside of section named Decomposed Graph Entailment Model. 
 
 
 
-\section{Conclusions \& Future Work}
+\subsection{Solution 3}
+How would you improve upon this work?
+\newline
 
+By using dependency parsing for graph's labels and edges. 
+
+\section{Question 2}
+
+\subsection{Solution 1}
+Explain the idea of compositional knowledge base representations.
+\newline
+
+$score(q,t) = x_{s}^{\tau}W_{r_1}...W_{r_k}x_t $
+\newline
+
+The model begins with an entity vector $x_s$  and sequentially
+applies traversal operators 
+
+$T_{r_i}(v)= v^{\tau} W_{r_i}$ 
+
+for each $r_i$. Each traversal operation results in a new “set vector” representing the entities reached
+at that point in traversal (corresponding to the
+nonzero entries of the set vector). Finally, it applies the membership operator 
+
+$M(v,x_t) = v^{\tau} x_t$ 
+
+to check if $t \in [[s/r_{1}/.../r_{k}]]$. Writing graph
+traversal in this way immediately suggests a useful
+generalization: take d much smaller than $|\varepsilon|$ learn the parameters $W_r$ and $x_e$.
+
+\subsection{Solution 2}
+Explain how this paper improves a compositional knowledge embedding
+model such as TransE.
+\newline
+
+Each traversal operator is trained such that its transformation preserves information in the set vector which might be needed in subsequent
+traversal steps.
+
+Since the compositional training object is based on  the membership operator, the traversal operators, and the entity vectors. The scoring functions of any model which can be rewritten in this way are composable by this method. See the below case for TransE model.
+
+\vspace{5pt}
+
+
+The scoring function for TransE model is 
+
+$score(s/r,t) = -||x_{s}+w_{r}-x_t||_{2}^{2} $ 
+
+where $x_{s},W_{r},x_t$ are all d dimensional vectors. 
+
+The above model can be rewritten in the below way;
+
+Membership operator $M(v,x_t) = -||v -x_t||_{2}^{2}$ 
+
+Traversal operator $T_{r}(x_s)= x_s+w_r$ 
+
+Since for handling query $q=s/r_1/r_2/.../r_k$, the score function of TransE model will be 
+
+$score(s/r,t) = -||x_{s}+w_{r_1}+w_{r_2}+...w_{r_k}-x_t||_{2}^{2} $ 
+
+\subsection{Solution 3}
+How would you improve upon this work?
+\newline
+
+By function composition using adversarial training or policy reward, data augmentation.
+
+\section{Question 3}
+
+\subsection{Solution 1}
+Explain how reinforcement learning is integrated with the model learning.
+Explain the policy and the learning mechanism.
+\newline
+
+
+A reinforcement learning (RL) approach can be defined as the learning algorithm in which a model is rewarded or penalized for its own actions. A properly designed reward, maximized via RL, could provide a model with more information about how to distribute probability mass among sequences that do not occur in the training set. 
+
+Specifically, in this paper, the authors proposed a recurrent neural model that generates natural-language questions from documents, conditioned on answers. Since questions can be framed in number of ways, writing a good learning function is a difficult task. 
+
+Policy gradient optimization was employed following a period of “pretraining” on maximum likelihood, using a combination of scalar rewards correlated to question quality. It can be explained in the following way:
+
+\begin{itemize}
+    \item Rewards
+    \begin{itemize}
+        \item Question answering (QA) 
+        
+        By feeding model-generated questions into a pretrained question-answering system and use that system’s accuracy as a reward.
+        \item Fluency(PPL)
+        
+        The perplexity assigned to word sequence by pretrained language model. Lower the perplexity, higher the positive reward in the policy.
+        
+        \item Combination
+        
+        Another approach is to take a weighted average of these reward systems. 
+        
+    \end{itemize}
+    \item Reinforce
+    
+    Use of reinforce algorithm by \cite{Williams} to maximize the model’s expected reward.
+    
+    \begin{equation} \label{eq4}
+    \begin{split}
+        L_{RL}&=-E_{\hat{Y}\sim \pi (\hat{Y}|D, A)}[R(\hat{Y})]\\
+        \nabla L_{EL}& \approx \sum_{t=1} \nabla \log \pi(\hat{y_t}|\hat{y_{<t}},D,A)\frac{R(\hat{Y}-\mu_R)}{\sigma_R} \\
+\end{split}
+\end{equation}
+
+where $\pi$ is the policy to be trained, $\mu_R$ \& $\sigma_R$ are the running mean and standard deviation of the reward, such that
+R($\hat{Y}$) has zero mean and unit variance.  The policy is a distribution over discrete actions, i.e. words $\hat{y}$ that make up the sequence $\hat{Y}$. It is the distribution induced at the output layer of the encoder-decoder model, initialized with the parameters determined through likelihood optimization. It is straightforward to combine policy gradient with maximum likelihood, as both gradients can be computed by backpropagating through a properly reweighted sequence-level log-likelihood.
+
+\item Training Scheme
+
+Beam-search is used to generate questions from the model. After calculating the reward with a sequence generated by beam search, we use the sample to teacher-force the decoder so as to recreate exactly the model states from which the sequence was generated. The model can then be accurately updated by coupling the parameter-independent reward with the log-likelihood of the generated sequence. 
+\end{itemize}
+
+
+\subsection{Solution 2}
+How would you suggest to generate answers as well along with the questions?
+\newline
+
+By adding layer of decomposed Graph Entailment Model mentioned in paper 1. 
+
+\begin{thebibliography}{}
+% this paper describes the dataset.
+\bibitem[\protect\citename{Williams}]{Williams}
+Williams, Ronald J.
+\newblock 1992.
+\newblock {\em Simple Statistical Gradient-Following Algorithms for Connectionist Reinforcement Learning}.
+\newblock Machine learning
+
+\end{thebibliography}
 \end{document}
