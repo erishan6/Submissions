@@ -36,7 +36,7 @@ In SciTail model implementation,
     \item Edge Probabilities:
     
     The edges in the graph representation for the hypothesis grasps the relation between nodes and calculating the support of an edge corresponds to the extraction of the relation in the hypothesis graph.
-    As per the literature, relation extraction methods  commonly use the output embeddings from an LSTMs to calculate context-dependent representation of the entities.Hence, We have to compute the representation for each node using the attention-weighted representation of the LSTM embeddings for each word in the premise.
+    As per the literature, relation extraction methods  commonly use the output embeddings from LSTMs to calculate context-dependent representation of the entities.Hence, We have to compute the representation for each node using the attention-weighted representation of the LSTM embeddings for each word in the premise.
     We also learn an n-dimensional embedding for each edge label. To compute
     the edge probability using the LSTM-weighted embedding and edge embedding are used.
 \end{itemize}
@@ -50,7 +50,14 @@ and edge probabilities. Refer the equations mentioned in the Final Prediction su
 How would you improve upon this work?
 \newline
 
-By using dependency parsing for graph's labels and edges. 
+We can improve this work by following:
+\begin{itemize}
+    \item using dependency parsing for graph's labels and edges for noisy structures and term importance. 
+    \item using text summarization(ntlk word frequency algorithm) for long phrases.
+    
+    
+\end{itemize}
+
 
 \section{Question 2}
 
@@ -109,7 +116,14 @@ $score(s/r,t) = -||x_{s}+w_{r_1}+w_{r_2}+...w_{r_k}-x_t||_{2}^{2} $
 How would you improve upon this work?
 \newline
 
-By function composition using adversarial training or policy reward, data augmentation.
+We can improve upon this work by following:
+\begin{itemize}
+    \item using function composition using adversarial training.
+    \item data augmentation for paths.
+    \item by using bidirectional LSTMs in recurrent neural networks.
+    \item by introducing policy rewards for reinforcement learning.
+    
+\end{itemize}
 
 \section{Question 3}
 
